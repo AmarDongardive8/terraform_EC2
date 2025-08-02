@@ -60,11 +60,51 @@ resource "aws_security_group" "my_security_group" {
   }
 }
 
+# resource "aws_instance" "my-instance" {
+#     key_name = aws_key_pair.my_key.key_name
+#     security_groups = [aws_security_group.my_security_group.name]
+#     ami           = "ami-01f23391a59163da9"
+#     instance_type = var.aws-ec2-type
+
+#     user_data = file("nginx_install.sh")
+
+#     root_block_device {
+#         volume_size = var.root-volume
+#         volume_type = "gp3"
+#     }
+
+#     tags = {
+#         Name = "tf-server-testing"
+#     }
+# }
+
+
+# resource "aws_instance" "my-instance" {
+#     count = 2 # meta argument
+#     key_name = aws_key_pair.my_key.key_name
+#     security_groups = [aws_security_group.my_security_group.name]
+#     ami           = "ami-01f23391a59163da9"
+#     instance_type = var.aws-ec2-type
+
+#     user_data = file("nginx_install.sh")
+
+#     root_block_device {
+#         volume_size = var.root-volume
+#         volume_type = "gp3"
+#     }
+
+#     tags = {
+#         Name = "tf-server-testing"
+#     }
+# }
+
+# using for_each
 resource "aws_instance" "my-instance" {
+    for_each = var.instance_names
     key_name = aws_key_pair.my_key.key_name
     security_groups = [aws_security_group.my_security_group.name]
     ami           = "ami-01f23391a59163da9"
-    instance_type = var.aws-ec2-type
+    instance_type = each.value
 
     user_data = file("nginx_install.sh")
 
@@ -74,6 +114,6 @@ resource "aws_instance" "my-instance" {
     }
 
     tags = {
-        Name = "tf-server-testing"
+        Name = each.key 
     }
 }
